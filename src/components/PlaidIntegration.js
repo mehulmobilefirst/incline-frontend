@@ -1,27 +1,32 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { usePlaidLink } from 'react-plaid-link';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { usePlaidLink } from "react-plaid-link";
 
 const PlaidIntegration = () => {
   const [linkToken, setLinkToken] = useState(null);
-  const [publicToken, setPublicToken] = useState('');
-  const [accessToken, setAccessToken] = useState('');
+  const [publicToken, setPublicToken] = useState("");
+  const [accessToken, setAccessToken] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [userID, setUserID] = useState();
 
   const { open, ready } = usePlaidLink({
     token: linkToken,
     onSuccess: async (public_token, metadata) => {
-      console.log('onSuccess: public_token', public_token);
+      console.log("onSuccess: public_token", public_token);
       setPublicToken(public_token);
+      console.log(public_token);
       try {
-        const response = await axios.post('https://incline-ten.vercel.app/get-access-token', { public_token });
+        const response = await axios.post(
+          "https://cors-anywhere.herokuapp.com/https://incline-ten.vercel.app/get-access-token",
+          { public_token, user_id: userID }
+        );
         const data = response.data;
-        setAccessToken(data.access_token);
-        setAccounts(data.accounts);
-        setTransactions(data.transactions);
+        setAccessToken(data?.access_token);
+        // setAccounts(data.accounts);
+        // setTransactions(data.transactions);
       } catch (error) {
-        console.error('Error exchanging public token:', error);
+        console.error("Error exchanging public token:", error);
       }
     },
   });
@@ -29,12 +34,15 @@ const PlaidIntegration = () => {
   useEffect(() => {
     const createLinkToken = async () => {
       try {
-        const response = await axios.post('https://incline-ten.vercel.app/create-link-token');
+        const response = await axios.post(
+          "https://incline-ten.vercel.app/create-link-token"
+        );
         const data = response.data;
-        console.log('createLinkToken: data', data);
+        console.log("createLinkToken: data", data);
         setLinkToken(data.link_token);
+        setUserID(data.user_id);
       } catch (error) {
-        console.error('Error creating Link token:', error);
+        console.error("Error creating Link token:", error);
       }
     };
 
@@ -42,8 +50,8 @@ const PlaidIntegration = () => {
   }, []);
 
   useEffect(() => {
-    console.log('linkToken:', linkToken);
-    console.log('ready:', ready);
+    console.log("linkToken:", linkToken);
+    console.log("ready:", ready);
   }, [linkToken, ready]);
 
   return (
@@ -52,8 +60,12 @@ const PlaidIntegration = () => {
       <button onClick={open} disabled={!ready}>
         Link your bank account
       </button>
-      <p>Public Token: <span>{publicToken}</span></p>
-      <p>Access Token: <span>{accessToken}</span></p>
+      <p>
+        Public Token: <span>{publicToken}</span>
+      </p>
+      <p>
+        Access Token: <span>{accessToken}</span>
+      </p>
 
       <h2>Accounts</h2>
       <div>
