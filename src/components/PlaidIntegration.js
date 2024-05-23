@@ -18,8 +18,8 @@ const PlaidIntegration = () => {
         const response = await axios.post('https://incline-ten.vercel.app/get-access-token', { public_token });
         const data = response.data;
         setAccessToken(data.access_token);
-        setAccounts(data.accounts);
-        setTransactions(data.transactions);
+      //  setAccounts(data.accounts);
+        //setTransactions(data.transactions);
       } catch (error) {
         console.error('Error exchanging public token:', error);
       }
