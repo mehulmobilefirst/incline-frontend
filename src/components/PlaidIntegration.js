@@ -15,16 +15,21 @@ const PlaidIntegration = () => {
     onSuccess: async (public_token, metadata) => {
       console.log("onSuccess: public_token", public_token);
       setPublicToken(public_token);
-      console.log(public_token);
+
       try {
         const response = await axios.post(
-          "https://cors-anywhere.herokuapp.com/https://incline-ten.vercel.app/get-access-token",
+          "https://incline-ten.vercel.app/get-access-token",
           { public_token, user_id: userID }
         );
         const data = response.data;
-        setAccessToken(data?.access_token);
-        // setAccounts(data.accounts);
-        // setTransactions(data.transactions);
+        setAccessToken(data.access_token);
+
+        // Optionally, fetch accounts and transactions here if needed
+        // const accountsResponse = await axios.get('/path-to-fetch-accounts', { params: { user_id: userID } });
+        // setAccounts(accountsResponse.data.accounts);
+        // const transactionsResponse = await axios.get('/path-to-fetch-transactions', { params: { user_id: userID } });
+        // setTransactions(transactionsResponse.data.transactions);
+
       } catch (error) {
         console.error("Error exchanging public token:", error);
       }
