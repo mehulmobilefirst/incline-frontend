@@ -78,8 +78,6 @@
 
 // export default PlaidIntegration;
 
-
-
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { usePlaidLink } from "react-plaid-link";
